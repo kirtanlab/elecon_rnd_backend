@@ -91,16 +91,17 @@ public class Controller {
   private final Dao dao = new Dao(); // Instantiate your DAO class
   private final Set<Integer> generatedIds = new HashSet<>(); // To store generated IDs and avoid duplicates
 
+
   @GetMapping("/Getfields")
   public ResponseEntity<Map<String, Object>> getFormFields() {
     try{
     List<Map<String, Object>> fields = new ArrayList<>();
 
-//    fields.add(generateImageField("image", true,true));
+    fields.add(generateImageField("image", true,false));
     fields.add(generateTextField("name", "Visitor Name", true, "kirtan",false));
     fields.add(generateAutocompleteField("visit_type", "Visit Type", true, "General",new String[]{"General", "Special BMC","Special Foundry","Special Floor"},false,false));
     fields.add(generateEmailField("email", "Email Address", true, "kirtan@gmail.com",false));
-    fields.add(generateAutocompleteField("Gender", "Gender", true, "Male",new String[]{"Male", "Female"},true,true));
+    fields.add(generateAutocompleteField("Gender", "Gender", true, "Male",new String[]{"Male", "Female", "Others"},true,true));
     fields.add(generateTextField("entry_gate", "Entry Gate", false, "Front",true));
     fields.add(generateTextField("designation", "Designation", false, "",true));
     fields.add(generateTextField("id_proof_number", "Id proof Number", true, "",true));
@@ -120,7 +121,7 @@ public class Controller {
     Date increasedDate = calendar.getTime();
     fields.add(generateDateField("to_date", "To Date", true, new Date() ,new Date(),false));
 
-    fields.add(generateDateField("from_date", "Form Date", true, increasedDate,increasedDate,true));
+    fields.add(generateDateField("from_date", "Form Date", true, increasedDate,increasedDate,false));
 
 
 
@@ -138,6 +139,9 @@ public class Controller {
     return handleException(e);
   }
   }
+  // edit (default values with options),
+  // view(default values with disabled fields),
+  // add new form(empty fields with options)
   @PostMapping("/update_fields/{fieldName}")
   public ResponseEntity<Map<String, Object>> updateFields(@PathVariable String fieldName, @RequestBody Map<String,Map<String, String>> requestBody) {
     try{List<Map<String, Object>> fields = new ArrayList<>();
@@ -156,7 +160,7 @@ public class Controller {
       fields.add(generateTextField("guest_company", "Guest Company", false, requestBody.get("values").get("guest_company"),false));
       fields.add(generateAutocompleteField("appointment_half", "Appointment half", false,  requestBody.get("values").get("appointment_half"),new String[]{"First Half", "Second Half"},false,false));
       fields.add(generateAutocompleteField("dept_name", "Department Name", false, requestBody.get("values").get("dept_name"),new String[]{"Mechanical Department", "Shop Department"},true,false));
-      fields.add(generateAutocompleteField("visit_frequency", "Visit Frequency", true, requestBody.get("values").get("visit_frequency"),new String[]{"Single", "Multiple"},true,false));
+      fields.add(generateAutocompleteField("visit_frequency", "Visit Frequency", true, requestBody.get("values").get("visit_frequency"),new String[]{"Single", "Multiple"},true,true));
       fields.add(generateNumberField("visitor_count", "Total Visitors", false, Integer.parseInt(requestBody.get("values").get("visitor_count")),false));
 
       Date date = new Date();
@@ -167,7 +171,7 @@ public class Controller {
       SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
       Date toDate = dateFormat.parse(requestBody.get("values").get("to_date"));
-      fields.add(generateDateField("to_date", "To Date", true, new Date(), toDate,false));
+      fields.add(generateDateField("to_date", "To Date", true, new Date(), toDate,true));
 
       Date fromDate = dateFormat.parse(requestBody.get("values").get("from_date"));
       fields.add(generateDateField("from_date", "Form Date", true, increasedDate,fromDate,true));
@@ -179,14 +183,31 @@ public class Controller {
           fields.get(4).put("defaultValue",requestBody.get("fieldValue").get("newValue"));
           if(requestBody.get("fieldValue").get("newValue").equals("Female")){
             System.out.println("13th field: "+ fields.get(13));
-            fields.get(0).put("show",true);
+            fields.getFirst().put("show",true);
             fields.get(13).put("defaultValue", "IT Department");
             fields.get(13).put("options",new String[]{"IT Department", "CRM Department"});
             fields.get(14).put("show",false);
             fields.get(15).put("show",true);
             fields.get(15).put("defaultValue",4);
           }
+          if(requestBody.get("fieldValue").get("newValue").equals("Male")){
 
+            fields.getFirst().put("show",false);
+            fields.get(13).put("defaultValue", "Mechanical Department");
+            fields.get(13).put("options",new String[]{"Mechanical Department", "Shop Department"});
+          }
+          System.out.println("GetFirst: "+ fields.getFirst());
+          break;
+        case "visit_frequency":
+          fields.get(4).put("defaultValue",requestBody.get("fieldValue").get("newValue"));
+          if(requestBody.get("fieldValue").get("newValue").equals("Multiple")){
+            System.out.println("13th field: "+ fields.get(13));
+            fields.getLast().put("show",true);
+          }
+          if(requestBody.get("fieldValue").get("newValue").equals("Single")){
+            fields.getLast().put("show",false);
+          }
+          System.out.println("GetFirst: "+ fields.getFirst());
           break;
       }
       System.out.println("13th field: "+ fields.get(13));

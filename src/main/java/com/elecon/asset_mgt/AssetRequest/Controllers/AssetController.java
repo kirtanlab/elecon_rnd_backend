@@ -46,6 +46,12 @@ public class AssetController {
     tab.put("type", color);
     return tab;
   }
+//  private static Map<String, Object> createDeleteMenuButton (String value, String label, String color){
+//    Map<String, Object> deleteButton = new HashMap<>();
+//    deleteButton.put("value", value);
+//    deleteButton.put("label", label);
+//    deleteButton.put("type", color);
+//  }
   private static Map<String,Object> createModal (String label, String color, String api_endopoint){ //api_endopoint to get form to submit Modal
     Map<String,Object> modal_object = new HashMap<>();
     modal_object.put("label", label);
@@ -53,6 +59,92 @@ public class AssetController {
     modal_object.put("api_endopoint", api_endopoint);
     return modal_object;
   }
+  private Map<String, Object> generateTextField(String name, String label, boolean required, String defaultValue,boolean show) {
+    Map<String, Object> field = new HashMap<>();
+    field.put("name", name);
+    field.put("label", label);
+    field.put("required", required);
+    field.put("type", "text");
+    field.put("defaultValue", defaultValue);
+    field.put("show", show);
+    return field;
+  }
+  private Map<String, Object> generateEmailField(String name, String label, boolean required, String defaultValue,boolean show) {
+    Map<String, Object> field = new HashMap<>();
+    field.put("name", name);
+    field.put("label", label);
+    field.put("required", required);
+    field.put("type", "email_id");
+    field.put("defaultValue", defaultValue);
+    field.put("show",show);
+    return field;
+  }
+  private Map<String, Object> generateImageField(String name,boolean dependent,boolean show){
+    Map<String, Object> field = new HashMap<>();
+    field.put("name", name);
+    field.put("type", "image");
+    field.put("show", show);
+    return field;
+  }
+  private Map<String, Object> generateMobileNumber(String name, String label, boolean required, String defaultValue,boolean show) {
+    Map<String, Object> field = new HashMap<>();
+    field.put("name", name);
+    field.put("label", label);
+    field.put("required", required);
+    field.put("type", "phone_no");
+    field.put("defaultValue", defaultValue);
+    field.put("show", show);
+    return field;
+  }
+  private Map<String, Object> generateNumberField(String name, String label, boolean required, long defaultValue,boolean show) {
+    Map<String, Object> field = new HashMap<>();
+    field.put("name", name);
+    field.put("label", label);
+    field.put("required", required);
+    field.put("type", "number");
+    field.put("defaultValue", defaultValue);
+    field.put("show", show);
+    return field;
+  }
+
+  private Map<String, Object> generateAutocompleteField(String name, String label, boolean required, String defaultValue, String[] options,boolean show,boolean updateField) {
+    Map<String, Object> field = new HashMap<>();
+    field.put("name", name);
+    field.put("label", label);
+    field.put("required", required);
+    field.put("type", "autocomplete");
+    field.put("options", options);
+    field.put("defaultValue", defaultValue);
+    field.put("show", show);
+    field.put("updateField",updateField);
+    return field;
+  }
+  private Map<String, Object> generateAutocompleteField(String name, String label, boolean required, String[] defaultValue, String[] options,boolean show,boolean updateField,String AutoCompletetype) {
+    Map<String, Object> field = new HashMap<>();
+    field.put("name", name);
+    field.put("label", label);
+    field.put("required", required);
+    field.put("type", "autocomplete");
+    field.put("options", options);
+    field.put("defaultValue", defaultValue);
+    field.put("show", show);
+    field.put("updateField",updateField);
+    field.put("AutoCompletetype",AutoCompletetype);
+    return field;
+  }
+  private Map<String, Object> generateDateField(String name, String label, boolean required, Date minDate,Date defaultValue,boolean show) {
+    Map<String, Object> field = new HashMap<>();
+    field.put("name", name);
+    field.put("label", label);
+    field.put("required", required);
+    field.put("type", "Date");
+    field.put("minDate", minDate);
+    field.put("defaultValue",defaultValue);
+    field.put("show", show);
+    return field;
+  }
+
+
   @Autowired
   private AssetRequestService assetreqservice;
 
@@ -134,6 +226,8 @@ public class AssetController {
       List<Map<String, Object>> simplifiedData_secondary = new ArrayList<>();
       Map<String, Object> simplifiedRequest_secondary_first = new HashMap<>();
       Map<String, Object> simplifiedRequest_secondary_second = new HashMap<>();
+
+
       simplifiedRequest_secondary_first.put("employee_name","kirtan");
       simplifiedRequest_secondary_first.put("visitor_phone_no","7984651212");
       simplifiedRequest_secondary_first.put("IN", createModal("IN", "secondary", "abc"));;
@@ -196,7 +290,14 @@ public class AssetController {
       columns.add(createColumn("collapse","","collapse"));
       columns.add(createColumn("options", "Options", "options"));
 
-      List<Integer> list= Arrays.asList(1, 2, 3,4);
+      List<Map<String, Object>> Filterfields = new ArrayList<>();
+      Filterfields.add(generateAutocompleteField("progress","Progress",false,new String[]{"IN"}, new String[]{"IN","OUT"},true,true,"Multiple"));
+      Filterfields.add(generateAutocompleteField("test1","Testing1",false,new String[]{"TEST1"}, new String[]{"TEST1","TEST2"},true,false,"Single"));
+      Filterfields.add(generateAutocompleteField("test2","Testing2",false,new String[]{"TEST3"}, new String[]{"TEST3","TEST4"},false,false,"Multiple"));
+      Filterfields.add(generateNumberField("minValue","Minimum Value",false,200,true));
+      Filterfields.add(generateNumberField("maxValue","Maximum Value",false,700,true));
+
+      List<Integer> list= Arrays.asList(1, 2, 3,4,5,6,7);
 
       List<Map<String, Object>> tabs = statusService.getStatus_ColorByIds(list);
 
@@ -214,6 +315,7 @@ public class AssetController {
       responseBody.put("tableInfo", tableInfo);
       responseBody.put("tableTabs", tabs);
       responseBody.put("SecondaryLabels", secondary_columns);
+      responseBody.put("Filterfields",Filterfields);
       return ResponseEntity.status(HttpStatus.OK).body(responseBody);
     } catch (Exception e) {
       return handleException(e);
@@ -249,6 +351,60 @@ public class AssetController {
              return handleException(e);
         }
     }
+  @DeleteMapping("/deleteSelected")
+  public ResponseEntity<Map<String, Object>> deleteSelectedAssetRequest(@RequestBody Map<String, List<Integer>> request) {
+    try {
+      List<Integer> ids = request.get("ids");
+      assetreqservice.deleteSelected(ids);
+
+      Map<String, Object> successResponse = new HashMap<>();
+      successResponse.put("status", true);
+      successResponse.put("message", "Selected asset requests deleted successfully!");
+
+      return ResponseEntity.status(HttpStatus.OK).body(successResponse);
+    } catch (Exception e) {
+      return handleException(e);
+    }
+  }
+  @PutMapping("/updateAssetRequest")
+  public ResponseEntity<Map<String, Object>> updateAssetRequest(@RequestBody AssetRequestModel updatedAssetRequests) {
+    try {
+      assetreqservice.updateAssetRequests(updatedAssetRequests);
+      Map<String, Object> successResponse = new HashMap<>();
+      successResponse.put("status", true);
+      successResponse.put("message", "Asset Request updated successfully!");
+      return ResponseEntity.status(HttpStatus.OK).body(successResponse);
+    } catch (Exception e) {
+      return handleException(e);
+    }
+  }
+  @PutMapping("AssetRequestemployee/{AssetRequestsID}")
+  public ResponseEntity<?> updateStatusToPullBack(@PathVariable Integer AssetRequestsID , Principal principal){
+    try {
+
+      Optional<AssetRequestModel> assetRequestModel = assetreqservice.updateAssetRequestToPullBack(AssetRequestsID, principal);
+      Map<String, Object> successResponse = new HashMap<>();
+      successResponse.put("status", true);
+      successResponse.put("message", "Asset request is pullback successfully!");
+      successResponse.put("serviceResponse", assetRequestModel);
+      return ResponseEntity.status(HttpStatus.CREATED).body(successResponse);
+    } catch (Exception e) {
+      return handleException(e);
+    }
+  }
+  @PutMapping("AssetRequestManager/{AssetRequestsID}")
+  public ResponseEntity<?> updateStatusToApproved(@PathVariable Integer AssetRequestsID , Principal principal){
+    try {
+      Optional<AssetRequestModel> assetRequestModel = assetreqservice.updateAssetRequestToApproved(AssetRequestsID, principal);
+      Map<String, Object> successResponse = new HashMap<>();
+      successResponse.put("status", true);
+      successResponse.put("message", "Asset request is approved successfully!");
+      successResponse.put("serviceResponse", assetRequestModel);
+      return ResponseEntity.status(HttpStatus.CREATED).body(successResponse);
+    } catch (Exception e) {
+      return handleException(e);
+    }
+  }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleException(@NotNull Exception e) {

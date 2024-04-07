@@ -103,9 +103,83 @@ public class AssetRequestService {
         repo.save(assetreqmodel);
         return actionresponse;
     }
+  public Optional<AssetRequestModel> findById(Integer id) {
+    return repo.findById(id);
+  }
 
     public void deletebyID(Integer assetreqID,Principal principal){
         // check employeeId in database with employeeId in jwt
         repo.deleteById(assetreqID);
     }
+  public void deleteSelected(List<Integer> ids) {
+    List<AssetRequestModel> assetrequestsToDelete = repo.findAllById(ids);
+    for (AssetRequestModel assetrequests : assetrequestsToDelete) {
+      if (assetrequests != null) {
+        repo.delete(assetrequests);
+      }
+    }
+
+  } public void updateAssetRequests(AssetRequestModel updatedAssetRequest) {
+    Integer assetRequID = updatedAssetRequest.getId();
+    AssetRequestModel exisitingAssetRequest = repo.findById(assetRequID)
+      .orElseThrow(() -> new AssetRequestNotFoundException("Asset Request not found with Id: " + assetRequID));
+    System.out.println("updateAssetRequests Status ID: "+updatedAssetRequest.getClassification_id());
+
+    exisitingAssetRequest.setAsset_type_id(updatedAssetRequest.getAsset_type_id());
+    exisitingAssetRequest.setRequired_by(updatedAssetRequest.getRequired_by());
+    exisitingAssetRequest.setDetails(updatedAssetRequest.getDetails());
+    exisitingAssetRequest.setReason(updatedAssetRequest.getReason());
+    exisitingAssetRequest.setStatus(updatedAssetRequest.getStatus());
+    exisitingAssetRequest.setClassification_id(updatedAssetRequest.getClassification_id());
+    exisitingAssetRequest.setCategory_id(updatedAssetRequest.getCategory_id());
+    exisitingAssetRequest.setLocation_id(updatedAssetRequest.getLocation_id());
+    exisitingAssetRequest.setEmployee(updatedAssetRequest.getEmployee());
+    exisitingAssetRequest.setReporting_to_id(updatedAssetRequest.getReporting_to_id());
+    exisitingAssetRequest.setAllocated_asset_id(updatedAssetRequest.getAllocated_asset_id());
+    exisitingAssetRequest.setUpdated_at(new Date());
+    repo.save(exisitingAssetRequest);
+  }
+  public Optional<AssetRequestModel> updateAssetRequestToPullBack(Integer assetRequestsID, Principal principal) {
+    String employeeCodejwt = principal.getName();
+    EmployeeModel employee = employeerepo.findByEmployeeCode(employeeCodejwt);
+    System.out.println("employee" + employee);
+    Optional<AssetRequestModel> assetRequestOptional = findById(assetRequestsID);
+    System.out.println("asset request" + assetRequestOptional);
+    assetRequestOptional.ifPresent(assetRequest -> {
+      // Retrieve the status with status 'PullBack'
+      StatusModel pullBackStatus = statusrepo.findByStatus("PullBack");
+      System.out.println("pullBackStatus" + pullBackStatus);
+      if (pullBackStatus != null) {
+        // Set the 'StatusModel' associated with 'AssetRequestModel'
+        assetRequest.setStatus(pullBackStatus);
+
+        // Set updated_at field to current timestamp
+        assetRequest.setUpdated_at(new Date());
+
+        // Save the updated 'AssetRequestModel' back to the database
+        repo.save(assetRequest);
+      } else {
+        System.out.println("PullBack status not found");
+        // Handle the case when 'PullBack' status is not found
+      }
+    });
+    return assetRequestOptional;
+  }
+  public  Optional<AssetRequestModel> updateAssetRequestToApproved(Integer assetRequestsID, Principal principal) {
+    String employeeCodejwt = principal.getName();
+    EmployeeModel employee = employeerepo.findByEmployeeCode(employeeCodejwt);
+    Optional<AssetRequestModel> assestrequest = findById(assetRequestsID);
+
+    assestrequest.ifPresent(assetRequest -> {
+      StatusModel approvedStatus = statusrepo.findByStatus("Approved");
+      if (approvedStatus != null) {
+        assetRequest.setStatus(approvedStatus);
+        assetRequest.setUpdated_at(new Date());
+        repo.save(assetRequest);
+      } else {
+        return;
+      }
+    });
+    return  assestrequest;
+  }
 }
