@@ -1,0 +1,27 @@
+values: {"","",...}
+fieldName : {"Gender"}
+fieldValue: {"Male"}
+
+edit: --- 
+view: each function case: view -> disabled: true ,defaultValue: edit, updateFields: false
+add new: ---
+
+
+function (case: edit)
+
+fields... defaultValues, options, ..., logic 
+
+function (case: view)
+
+fields... defaultValues,disabled
+
+function (case: add new asset requqest)
+
+fields... emtypFields, defaultValues, options ,... logic
+
+/getFields/view , /getFields/edit, /getFields/add_new
+
+
+{value: edit_form, label: Edit row, api_endpoint: "/getFields/edit"}
+{value: view_form, label: view row, api_endpoint: "/getFields/view"}
+{value: edit_form, label: Edit row, api_endpoint: "/getFields/edit"}

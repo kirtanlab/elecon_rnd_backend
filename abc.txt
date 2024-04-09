@@ -1,0 +1,33 @@
+
+
+1)Function: getAssetRequestForm(case: {edit, view, Add new})
+
+	case: edit: 
+	   defaultValues, cases 
+	case: add new: (copy paste ,just remove defaultValues)
+	   defaultValues, cases  
+	case: view: 
+	   function: view: true --> disabled, updateField: false
+   
+2)Function: getAssetRequestFiltersForm(case: {Add new})
+
+	case: add new: 
+	   defaultValues, cases
+
+3)Function: getAssetRequestPrimaryColumns()
+          
+         function: createColumn, createMenu
+
+6)Function: getAssetRequestPrimaryData()
+         function: Primary, Secondary data
+    
+5)Function: getAssetRequestSecondaryColumns()
+          
+         function: createColumn, createMenu
+
+6)Function: getAssetRequestTableInfo()
+	function
+      
+7)Function: getAssetRequestTabs()
+         function: tabs 
+         

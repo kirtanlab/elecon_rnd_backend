@@ -3,6 +3,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import com.elecon.asset_mgt.Category.Service.CategoryNotFoundException;
+import com.elecon.asset_mgt.utils.*;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -62,7 +63,6 @@ public class Controller {
     field.put("show", show);
     return field;
   }
-
   private Map<String, Object> generateAutocompleteField(String name, String label, boolean required, String defaultValue, String[] options,boolean show,boolean updateField) {
     Map<String, Object> field = new HashMap<>();
     field.put("name", name);
@@ -86,8 +86,6 @@ public class Controller {
     field.put("show", show);
     return field;
   }
-
-
   private final Dao dao = new Dao(); // Instantiate your DAO class
   private final Set<Integer> generatedIds = new HashSet<>(); // To store generated IDs and avoid duplicates
 
@@ -97,32 +95,86 @@ public class Controller {
     try{
     List<Map<String, Object>> fields = new ArrayList<>();
 
-    fields.add(generateImageField("image", true,false));
-    fields.add(generateTextField("name", "Visitor Name", true, "kirtan",false));
-    fields.add(generateAutocompleteField("visit_type", "Visit Type", true, "General",new String[]{"General", "Special BMC","Special Foundry","Special Floor"},false,false));
-    fields.add(generateEmailField("email", "Email Address", true, "kirtan@gmail.com",false));
-    fields.add(generateAutocompleteField("Gender", "Gender", true, "Male",new String[]{"Male", "Female", "Others"},true,true));
-    fields.add(generateTextField("entry_gate", "Entry Gate", false, "Front",true));
-    fields.add(generateTextField("designation", "Designation", false, "",true));
-    fields.add(generateTextField("id_proof_number", "Id proof Number", true, "",true));
-    fields.add(generateTextField("purpose", "Purpose", false, "Visit to tepl",true));
-    fields.add(generateMobileNumber("phone_no", "Phone Number", false,"7984651231",false));
-    fields.add(generateTextField("place", "Place", false, "Anand",false));
-    fields.add(generateTextField("guest_company", "Guest Company", false, "BMC",false));
-    fields.add(generateAutocompleteField("appointment_half", "Appointment half", false,  "First Half",new String[]{"First Half", "Second Half"},false,false));
-    fields.add(generateAutocompleteField("dept_name", "Department Name", false, "Mechanical Department",new String[]{"Mechanical Department", "Shop Department"},true,false));
-    fields.add(generateAutocompleteField("visit_frequency", "Visit Frequency", true, "Single",new String[]{"Single", "Multiple"},true,false));
-    fields.add(generateNumberField("visitor_count", "Total Visitors", false, 1,true));
+    ImageFieldGenerator image = new ImageFieldGenerator("image", true);
+    TextFieldGenerator name = new TextFieldGenerator("name", "Visitor Name", true, "Kirtan", false);
+    AutoCompleteFieldGenerator visitType = new AutoCompleteFieldGenerator("visit_type", "Visit Type", true, "General", new String[]{"General", "Special BMC", "Special Foundry", "Special Floor"}, false, false);
+    EmailFieldGenerator email = new EmailFieldGenerator("email", "Email Address", true, "kirtan@gmail.com", false);
+    AutoCompleteFieldGenerator gender = new AutoCompleteFieldGenerator("Gender", "Gender", true, "Male", new String[]{"Male", "Female", "Others"}, true, true);
+    TextFieldGenerator entryGate = new TextFieldGenerator("entry_gate", "Entry Gate", false, "Front", true);
+    TextFieldGenerator designation = new TextFieldGenerator("designation", "Designation", false, "", true);
+    TextFieldGenerator idProofNumber = new TextFieldGenerator("id_proof_number", "Id proof Number", true, "", true);
+    TextFieldGenerator purpose = new TextFieldGenerator("purpose", "Purpose", false, "Visit to tepl", true);
+    MobileNumberFieldGenerator phoneNo = new MobileNumberFieldGenerator("phone_no", "Phone Number", false, "7984651231", false);
+    TextFieldGenerator place = new TextFieldGenerator("place", "Place", false, "Anand", false);
+    TextFieldGenerator guestCompany = new TextFieldGenerator("guest_company", "Guest Company", false, "BMC", false);
+    AutoCompleteFieldGenerator appointmentHalf = new AutoCompleteFieldGenerator("appointment_half", "Appointment half", false, "First Half", new String[]{"First Half", "Second Half"}, false, false);
+    AutoCompleteFieldGenerator deptName = new AutoCompleteFieldGenerator("dept_name", "Department Name", false, "Mechanical Department", new String[]{"Mechanical Department", "Shop Department"}, true, false);
+    AutoCompleteFieldGenerator visitFrequency = new AutoCompleteFieldGenerator("visit_frequency", "Visit Frequency", true, "Single", new String[]{"Single", "Multiple"}, true, false);
+    NumberFieldGenerator visitorCount = new NumberFieldGenerator("visitor_count", "Total Visitors", false, 1, true);
 
     Date date = new Date();
     Calendar calendar = Calendar.getInstance();
     calendar.setTime(date);
     calendar.add(Calendar.DAY_OF_MONTH, 1);
     Date increasedDate = calendar.getTime();
-    fields.add(generateDateField("to_date", "To Date", true, new Date() ,new Date(),false));
 
-    fields.add(generateDateField("from_date", "Form Date", true, increasedDate,increasedDate,false));
+    DateFieldGenerator toDate = new DateFieldGenerator("to_date", "To Date", true, new Date(), new Date(), false);
+    DateFieldGenerator fromDate = new DateFieldGenerator("from_date", "Form Date", true, increasedDate, increasedDate, false);
 
+    fields.add(image.getField());
+    fields.add(name.getField());
+    fields.add(visitType.getField());
+    fields.add(email.getField());
+
+    fields.add(gender.getField());
+
+    fields.add(entryGate.getField());
+
+    fields.add(designation.getField());
+
+    fields.add(idProofNumber.getField());
+
+    fields.add(purpose.getField());
+
+    fields.add(phoneNo.getField());
+
+    fields.add(place.getField());
+
+    fields.add(guestCompany.getField());
+
+    fields.add(appointmentHalf.getField());
+    fields.add(deptName.getField());
+
+    fields.add(visitFrequency.getField());
+    fields.add(visitorCount.getField());
+
+
+//    fields.add(generateImageField("image", true,false));
+//    fields.add(generateTextField("name", "Visitor Name", true, "kirtan",false));
+//    fields.add(generateAutocompleteField("visit_type", "Visit Type", true, "General",new String[]{"General", "Special BMC","Special Foundry","Special Floor"},false,false));
+//    fields.add(generateEmailField("email", "Email Address", true, "kirtan@gmail.com",false));
+//    fields.add(generateAutocompleteField("Gender", "Gender", true, "Male",new String[]{"Male", "Female", "Others"},true,true));
+//    fields.add(generateTextField("entry_gate", "Entry Gate", false, "Front",true));
+//    fields.add(generateTextField("designation", "Designation", false, "",true));
+//    fields.add(generateTextField("id_proof_number", "Id proof Number", true, "",true));
+//    fields.add(generateTextField("purpose", "Purpose", false, "Visit to tepl",true));
+//    fields.add(generateMobileNumber("phone_no", "Phone Number", false,"7984651231",false));
+//    fields.add(generateTextField("place", "Place", false, "Anand",false));
+//    fields.add(generateTextField("guest_company", "Guest Company", false, "BMC",false));
+//    fields.add(generateAutocompleteField("appointment_half", "Appointment half", false,  "First Half",new String[]{"First Half", "Second Half"},false,false));
+//    fields.add(generateAutocompleteField("dept_name", "Department Name", false, "Mechanical Department",new String[]{"Mechanical Department", "Shop Department"},true,false));
+//    fields.add(generateAutocompleteField("visit_frequency", "Visit Frequency", true, "Single",new String[]{"Single", "Multiple"},true,false));
+//    fields.add(generateNumberField("visitor_count", "Total Visitors", false, 1,true));
+//
+//    Date date = new Date();
+//    Calendar calendar = Calendar.getInstance();
+//    calendar.setTime(date);
+//    calendar.add(Calendar.DAY_OF_MONTH, 1);
+//    Date increasedDate = calendar.getTime();
+//    fields.add(generateDateField("to_date", "To Date", true, new Date() ,new Date(),false));
+//
+//    fields.add(generateDateField("from_date", "Form Date", true, increasedDate,increasedDate,false));
+//
 
 
     ArrayList<String> watchFields = new ArrayList<>();
@@ -142,9 +194,151 @@ public class Controller {
   // edit (default values with options),
   // view(default values with disabled fields),
   // add new form(empty fields with options)
+
+  @PostMapping("getFields/{FormType}")
+  public ResponseEntity<Map<String, Object>> getFields(@PathVariable String FormType, @RequestBody Map<String,Map<String, String>> requestBody) {
+    ImageFieldGenerator image = new ImageFieldGenerator("image", true);
+    TextFieldGenerator name = new TextFieldGenerator("name", "Visitor Name", true, "Kirtan", false);
+    AutoCompleteFieldGenerator visitType = new AutoCompleteFieldGenerator("visit_type", "Visit Type", true, "General", new String[]{"General", "Special BMC", "Special Foundry", "Special Floor"}, false, false);
+    EmailFieldGenerator email = new EmailFieldGenerator("email", "Email Address", true, "kirtan@gmail.com", false);
+    AutoCompleteFieldGenerator gender = new AutoCompleteFieldGenerator("Gender", "Gender", true, "Male", new String[]{"Male", "Female", "Others"}, true, true);
+    TextFieldGenerator entryGate = new TextFieldGenerator("entry_gate", "Entry Gate", false, "Front", true);
+    TextFieldGenerator designation = new TextFieldGenerator("designation", "Designation", false, "", true);
+    TextFieldGenerator idProofNumber = new TextFieldGenerator("id_proof_number", "Id proof Number", true, "", true);
+    TextFieldGenerator purpose = new TextFieldGenerator("purpose", "Purpose", false, "Visit to tepl", true);
+    MobileNumberFieldGenerator phoneNo = new MobileNumberFieldGenerator("phone_no", "Phone Number", false, "7984651231", false);
+    TextFieldGenerator place = new TextFieldGenerator("place", "Place", false, "Anand", false);
+    TextFieldGenerator guestCompany = new TextFieldGenerator("guest_company", "Guest Company", false, "BMC", false);
+    AutoCompleteFieldGenerator appointmentHalf = new AutoCompleteFieldGenerator("appointment_half", "Appointment half", false, "First Half", new String[]{"First Half", "Second Half"}, false, false);
+    AutoCompleteFieldGenerator deptName = new AutoCompleteFieldGenerator("dept_name", "Department Name", false, "Mechanical Department", new String[]{"Mechanical Department", "Shop Department"}, true, false);
+    AutoCompleteFieldGenerator visitFrequency = new AutoCompleteFieldGenerator("visit_frequency", "Visit Frequency", true, "Single", new String[]{"Single", "Multiple"}, true, false);
+    NumberFieldGenerator visitorCount = new NumberFieldGenerator("visitor_count", "Total Visitors", false, 1, true);
+
+    Date date = new Date();
+    Calendar calendar = Calendar.getInstance();
+    calendar.setTime(date);
+    calendar.add(Calendar.DAY_OF_MONTH, 1);
+    Date increasedDate = calendar.getTime();
+
+    DateFieldGenerator toDate = new DateFieldGenerator("to_date", "To Date", true, new Date(), new Date(), false);
+    DateFieldGenerator fromDate = new DateFieldGenerator("from_date", "Form Date", true, increasedDate, increasedDate, false);
+
+    if(FormType.equals("edit")){
+      List<Map<String, Object>> fields = new ArrayList<>();
+      fields.add(image.getField());
+      fields.add(name.getField());
+      fields.add(visitType.getField());
+      fields.add(email.getField());
+
+      fields.add(gender.getField());
+
+      fields.add(entryGate.getField());
+
+      fields.add(designation.getField());
+
+      fields.add(idProofNumber.getField());
+
+      fields.add(purpose.getField());
+
+      fields.add(phoneNo.getField());
+
+      fields.add(place.getField());
+
+      fields.add(guestCompany.getField());
+
+      fields.add(appointmentHalf.getField());
+      fields.add(deptName.getField());
+
+      fields.add(visitFrequency.getField());
+      fields.add(visitorCount.getField());
+      Map<String, Object> successResponse = new HashMap<>();
+      successResponse.put("status", true);
+      successResponse.put("fields", fields);
+      return ResponseEntity.ok(successResponse);
+    }
+    else if(FormType.equals("view")){
+      List<Map<String, Object>> fields = new ArrayList<>();
+      fields.add(image.getViewField(false));
+      fields.add(name.getViewField());
+      fields.add(visitType.getViewField());
+      fields.add(email.getViewField());
+
+      fields.add(gender.getViewField());
+
+      fields.add(entryGate.getViewField());
+
+      fields.add(designation.getViewField());
+
+      fields.add(idProofNumber.getViewField());
+
+      fields.add(purpose.getViewField());
+
+      fields.add(phoneNo.getViewField());
+
+      fields.add(place.getViewField());
+
+      fields.add(guestCompany.getViewField());
+
+      fields.add(appointmentHalf.getViewField());
+      fields.add(deptName.getViewField());
+
+      fields.add(visitFrequency.getViewField());
+      fields.add(visitorCount.getViewField());
+      fields.add(fromDate.getViewField());
+      fields.add(toDate.getViewField());
+      Map<String, Object> successResponse = new HashMap<>();
+      successResponse.put("status", true);
+      successResponse.put("fields", fields);
+      return ResponseEntity.ok(successResponse);
+    }
+    else if (FormType.equals("AddNew")) {
+      List<Map<String, Object>> fields = new ArrayList<>();
+      fields.add(image.getField(false));
+      fields.add(name.getAddNewField());
+      fields.add(visitType.getAddNewField());
+      fields.add(email.getAddNewField());
+
+      fields.add(gender.getAddNewField());
+
+      fields.add(entryGate.getAddNewField());
+
+      fields.add(designation.getAddNewField());
+
+      fields.add(idProofNumber.getAddNewField());
+
+      fields.add(purpose.getAddNewField());
+
+      fields.add(phoneNo.getAddNewField());
+
+      fields.add(place.getAddNewField());
+
+      fields.add(guestCompany.getAddNewField());
+
+      fields.add(appointmentHalf.getAddNewField());
+      fields.add(deptName.getAddNewField());
+
+      fields.add(visitFrequency.getAddNewField());
+      fields.add(visitorCount.getAddNewField());
+      fields.add(fromDate.getAddNewField());
+      fields.add(toDate.getAddNewField());
+      Map<String, Object> successResponse = new HashMap<>();
+      successResponse.put("status", true);
+      successResponse.put("fields", fields);
+      return ResponseEntity.ok(successResponse);
+    }else {
+      Map<String, Object> successResponse = new HashMap<>();
+      successResponse.put("status", false);
+      successResponse.put("fields", null);
+      successResponse.put("message","please add Form Type");
+      return ResponseEntity.ok(successResponse);
+    }
+  }
+
   @PostMapping("/update_fields/{fieldName}")
   public ResponseEntity<Map<String, Object>> updateFields(@PathVariable String fieldName, @RequestBody Map<String,Map<String, String>> requestBody) {
-    try{List<Map<String, Object>> fields = new ArrayList<>();
+    try{
+
+      List<Map<String, Object>> fields = new ArrayList<>();
 
       fields.add(generateImageField("image", true,false));
       fields.add(generateTextField("name", "Visitor Name", true, requestBody.get("values").get("name"),true));
@@ -191,7 +385,6 @@ public class Controller {
             fields.get(15).put("defaultValue",4);
           }
           if(requestBody.get("fieldValue").get("newValue").equals("Male")){
-
             fields.getFirst().put("show",false);
             fields.get(13).put("defaultValue", "Mechanical Department");
             fields.get(13).put("options",new String[]{"Mechanical Department", "Shop Department"});
