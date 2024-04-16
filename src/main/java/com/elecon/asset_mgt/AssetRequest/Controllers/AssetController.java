@@ -194,6 +194,7 @@ public class AssetController {
   }
 
 
+
 //  @CrossOrigin(origins = "*", allowedHeaders = "*")
 //  @GetMapping("getAllStatus/")
 //  public ResponseEntity<Map<String,Object>> getAllStatus () {
@@ -297,7 +298,7 @@ public class AssetController {
       Filterfields.add(generateNumberField("minValue","Minimum Value",false,200,true));
       Filterfields.add(generateNumberField("maxValue","Maximum Value",false,700,true));
 
-      List<Integer> list= Arrays.asList(1, 2, 3,4,5,6,7);
+      List<Integer> list= Arrays.asList(1, 2, 3,4,5);
 
       List<Map<String, Object>> tabs = statusService.getStatus_ColorByIds(list);
 

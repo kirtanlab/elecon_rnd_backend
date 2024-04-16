@@ -195,12 +195,12 @@ public class Controller {
   // view(default values with disabled fields),
   // add new form(empty fields with options)
 
-  @PostMapping("getFields/{FormType}")
-  public ResponseEntity<Map<String, Object>> getFields(@PathVariable String FormType, @RequestBody Map<String,Map<String, String>> requestBody) {
+  @PostMapping("getFields/{FormType}")  //edit,view,AddNew
+  public ResponseEntity<Map<String, Object>> getFields(@PathVariable String FormType) {
     ImageFieldGenerator image = new ImageFieldGenerator("image", true);
     TextFieldGenerator name = new TextFieldGenerator("name", "Visitor Name", true, "Kirtan", false);
     AutoCompleteFieldGenerator visitType = new AutoCompleteFieldGenerator("visit_type", "Visit Type", true, "General", new String[]{"General", "Special BMC", "Special Foundry", "Special Floor"}, false, false);
-    EmailFieldGenerator email = new EmailFieldGenerator("email", "Email Address", true, "kirtan@gmail.com", false);
+    EmailFieldGenerator email = new EmailFieldGenerator("email", "Email Address", true, "kirtan@gmail.com", true);
     AutoCompleteFieldGenerator gender = new AutoCompleteFieldGenerator("Gender", "Gender", true, "Male", new String[]{"Male", "Female", "Others"}, true, true);
     TextFieldGenerator entryGate = new TextFieldGenerator("entry_gate", "Entry Gate", false, "Front", true);
     TextFieldGenerator designation = new TextFieldGenerator("designation", "Designation", false, "", true);
@@ -223,115 +223,119 @@ public class Controller {
     DateFieldGenerator toDate = new DateFieldGenerator("to_date", "To Date", true, new Date(), new Date(), false);
     DateFieldGenerator fromDate = new DateFieldGenerator("from_date", "Form Date", true, increasedDate, increasedDate, false);
 
-    if(FormType.equals("edit")){
-      List<Map<String, Object>> fields = new ArrayList<>();
-      fields.add(image.getField());
-      fields.add(name.getField());
-      fields.add(visitType.getField());
-      fields.add(email.getField());
 
-      fields.add(gender.getField());
+      switch (FormType) {
+          case "edit" -> {
+              List<Map<String, Object>> fields = new ArrayList<>();
+              fields.add(image.getField());
+              fields.add(name.getField());
+              fields.add(visitType.getField());
+              fields.add(email.getField());
 
-      fields.add(entryGate.getField());
+              fields.add(gender.getField());
 
-      fields.add(designation.getField());
+              fields.add(entryGate.getField());
 
-      fields.add(idProofNumber.getField());
+              fields.add(designation.getField());
 
-      fields.add(purpose.getField());
+              fields.add(idProofNumber.getField());
 
-      fields.add(phoneNo.getField());
+              fields.add(purpose.getField());
 
-      fields.add(place.getField());
+              fields.add(phoneNo.getField());
 
-      fields.add(guestCompany.getField());
+              fields.add(place.getField());
 
-      fields.add(appointmentHalf.getField());
-      fields.add(deptName.getField());
+              fields.add(guestCompany.getField());
 
-      fields.add(visitFrequency.getField());
-      fields.add(visitorCount.getField());
-      Map<String, Object> successResponse = new HashMap<>();
-      successResponse.put("status", true);
-      successResponse.put("fields", fields);
-      return ResponseEntity.ok(successResponse);
-    }
-    else if(FormType.equals("view")){
-      List<Map<String, Object>> fields = new ArrayList<>();
-      fields.add(image.getViewField(false));
-      fields.add(name.getViewField());
-      fields.add(visitType.getViewField());
-      fields.add(email.getViewField());
+              fields.add(appointmentHalf.getField());
+              fields.add(deptName.getField());
 
-      fields.add(gender.getViewField());
+              fields.add(visitFrequency.getField());
+              fields.add(visitorCount.getField());
+              Map<String, Object> successResponse = new HashMap<>();
+              successResponse.put("status", true);
+              successResponse.put("fields", fields);
+              return ResponseEntity.ok(successResponse);
+          }
+          case "view" -> {
+              List<Map<String, Object>> fields = new ArrayList<>();
+              fields.add(image.getViewField(false));
+              fields.add(name.getViewField());
+              fields.add(visitType.getViewField());
+              fields.add(email.getViewField());
 
-      fields.add(entryGate.getViewField());
+              fields.add(gender.getViewField());
 
-      fields.add(designation.getViewField());
+              fields.add(entryGate.getViewField());
 
-      fields.add(idProofNumber.getViewField());
+              fields.add(designation.getViewField());
 
-      fields.add(purpose.getViewField());
+              fields.add(idProofNumber.getViewField());
 
-      fields.add(phoneNo.getViewField());
+              fields.add(purpose.getViewField());
 
-      fields.add(place.getViewField());
+              fields.add(phoneNo.getViewField());
 
-      fields.add(guestCompany.getViewField());
+              fields.add(place.getViewField());
 
-      fields.add(appointmentHalf.getViewField());
-      fields.add(deptName.getViewField());
+              fields.add(guestCompany.getViewField());
 
-      fields.add(visitFrequency.getViewField());
-      fields.add(visitorCount.getViewField());
-      fields.add(fromDate.getViewField());
-      fields.add(toDate.getViewField());
-      Map<String, Object> successResponse = new HashMap<>();
-      successResponse.put("status", true);
-      successResponse.put("fields", fields);
-      return ResponseEntity.ok(successResponse);
-    }
-    else if (FormType.equals("AddNew")) {
-      List<Map<String, Object>> fields = new ArrayList<>();
-      fields.add(image.getField(false));
-      fields.add(name.getAddNewField());
-      fields.add(visitType.getAddNewField());
-      fields.add(email.getAddNewField());
+              fields.add(appointmentHalf.getViewField());
+              fields.add(deptName.getViewField());
 
-      fields.add(gender.getAddNewField());
+              fields.add(visitFrequency.getViewField());
+              fields.add(visitorCount.getViewField());
+              fields.add(fromDate.getViewField());
+              fields.add(toDate.getViewField());
+              Map<String, Object> successResponse = new HashMap<>();
+              successResponse.put("status", true);
+              successResponse.put("fields", fields);
+              return ResponseEntity.ok(successResponse);
+          }
+          case "AddNew" -> {
+              List<Map<String, Object>> fields = new ArrayList<>();
+              fields.add(image.getField(false));
+              fields.add(name.getAddNewField());
+              fields.add(visitType.getAddNewField());
+              fields.add(email.getAddNewField());
 
-      fields.add(entryGate.getAddNewField());
+              fields.add(gender.getAddNewField());
 
-      fields.add(designation.getAddNewField());
+              fields.add(entryGate.getAddNewField());
 
-      fields.add(idProofNumber.getAddNewField());
+              fields.add(designation.getAddNewField());
 
-      fields.add(purpose.getAddNewField());
+              fields.add(idProofNumber.getAddNewField());
 
-      fields.add(phoneNo.getAddNewField());
+              fields.add(purpose.getAddNewField());
 
-      fields.add(place.getAddNewField());
+              fields.add(phoneNo.getAddNewField());
 
-      fields.add(guestCompany.getAddNewField());
+              fields.add(place.getAddNewField());
 
-      fields.add(appointmentHalf.getAddNewField());
-      fields.add(deptName.getAddNewField());
+              fields.add(guestCompany.getAddNewField());
 
-      fields.add(visitFrequency.getAddNewField());
-      fields.add(visitorCount.getAddNewField());
-      fields.add(fromDate.getAddNewField());
-      fields.add(toDate.getAddNewField());
-      Map<String, Object> successResponse = new HashMap<>();
-      successResponse.put("status", true);
-      successResponse.put("fields", fields);
-      return ResponseEntity.ok(successResponse);
-    }else {
-      Map<String, Object> successResponse = new HashMap<>();
-      successResponse.put("status", false);
-      successResponse.put("fields", null);
-      successResponse.put("message","please add Form Type");
-      return ResponseEntity.ok(successResponse);
-    }
+              fields.add(appointmentHalf.getAddNewField());
+              fields.add(deptName.getAddNewField());
+
+              fields.add(visitFrequency.getAddNewField());
+              fields.add(visitorCount.getAddNewField());
+              fields.add(fromDate.getAddNewField());
+              fields.add(toDate.getAddNewField());
+              Map<String, Object> successResponse = new HashMap<>();
+              successResponse.put("status", true);
+              successResponse.put("fields", fields);
+              return ResponseEntity.ok(successResponse);
+          }
+          default -> {
+              Map<String, Object> successResponse = new HashMap<>();
+              successResponse.put("status", false);
+              successResponse.put("fields", null);
+              successResponse.put("message", "please add Form Type");
+              return ResponseEntity.ok(successResponse);
+          }
+      }
   }
 
   @PostMapping("/update_fields/{fieldName}")
