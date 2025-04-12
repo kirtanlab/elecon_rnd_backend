@@ -158,6 +158,7 @@ The system uses JWT (JSON Web Token) for authentication. To access protected end
    ```
 
 ## Database Schema
+![Assests Management ](https://github.com/user-attachments/assets/ae8c0100-86a8-464c-a01f-f22e2bb612c8)
 
 The system uses several interconnected entities:
 
